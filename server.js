@@ -13,10 +13,17 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json()); // Parse incoming JSON requests
 app.use(cors()); // Enable CORS
 
+const corsOptions = {
+  origin: "https://frontendtest-cy64.onrender.com/", // Replace with your frontend URL
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
+
+
 // MongoDB Atlas connection
 mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
 })
   .then(() => console.log("Connected to MongoDB Atlas"))
   .catch(err => console.error("Failed to connect to MongoDB Atlas", err));
@@ -27,6 +34,9 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
 });
 
+
+
+
 // User Model
 const User = mongoose.model("User", userSchema);
 
@@ -34,20 +44,27 @@ const User = mongoose.model("User", userSchema);
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
 
-  // Check if user already exists
-  const existingUser = await User.findOne({ username });
-  if (existingUser) {
-    return res.status(400).json({ message: "User already exists" });
+  try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const newUser = new User({ username, password: hashedPassword });
+    await newUser.save();
+
+    res.status(201).json({ message: "User registered successfully" });
+  } catch (error) {
+    console.error("Error registering user:", error);
+    res.status(500).json({ message: "Server error, please try again" });
   }
-
-  // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Create new user
-  const newUser = new User({ username, password: hashedPassword });
-  await newUser.save();
-  res.status(201).json({ message: "User registered successfully" });
 });
+
 
 // Login Route
 app.post("/login", async (req, res) => {
