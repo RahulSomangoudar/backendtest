@@ -13,12 +13,12 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json()); // Parse incoming JSON requests
 app.use(cors()); // Enable CORS
 
-const corsOptions = {
-  origin: "https://frontendtest-cy64.onrender.com/", // Replace with your frontend URL
-  credentials: true,
-};
+// const corsOptions = {
+//   origin: "https://frontendtest-cy64.onrender.com/", // Replace with your frontend URL
+//   credentials: true,
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 
 
