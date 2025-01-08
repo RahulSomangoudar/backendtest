@@ -13,13 +13,12 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json()); // Parse incoming JSON requests
 app.use(cors()); // Enable CORS
 
-// const corsOptions = {
-//   origin: "https://frontendtest-cy64.onrender.com/", // Replace with your frontend URL
-//   credentials: true,
-// };
+const corsOptions = {
+  origin: "https://frontendtest-cy64.onrender.com", // Replace with your frontend URL
+  credentials: true, // This is optional if you want to support cookies/sessions
+};
 
-// app.use(cors(corsOptions));
-
+app.use(cors(corsOptions));
 
 
 // MongoDB Atlas connection
@@ -89,8 +88,9 @@ app.post("/login", async (req, res) => {
 app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'none'; font-src 'self' https://fonts.gstatic.com;"
+    "default-src 'self'; font-src 'self' https://fonts.gstatic.com; script-src 'self';"
   );
+  
   next();
 });
 
@@ -98,7 +98,9 @@ app.get("/", (req, res) => {
   res.send("Backend is running");
 });
 
-
+app.get("/register", (req, res) => {
+  res.send("Backend is running fast");
+});
 
 // Start server
 app.listen(PORT, () => {
