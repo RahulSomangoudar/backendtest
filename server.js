@@ -85,6 +85,17 @@ app.post("/login", async (req, res) => {
   res.status(200).json({ message: "Login successful" });
 });
 
+
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'none'; font-src 'self' https://fonts.gstatic.com;"
+  );
+  next();
+});
+
+
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
